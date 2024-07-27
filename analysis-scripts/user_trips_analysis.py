@@ -1,4 +1,3 @@
-from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, broadcast, lit, count, when, round
 from utils.spark_utils import get_local_spark_session
 
@@ -25,9 +24,9 @@ def main():
         .select(col("t.request_at"), col("t.client_id"), col("t.driver_id"), col("t.status")) \
         .groupBy(col("request_at")) \
         .agg(
-        count("status").alias("total_trips"),
-        count(when(col("status") != lit("completed"), True)).alias("total_cancelled_trips")
-    ) \
+            count("status").alias("total_trips"),
+            count(when(col("status") != lit("completed"), True)).alias("total_cancelled_trips")
+        ) \
         .select("request_at",
                 round(col("total_cancelled_trips") * lit(100) / col("total_trips"), 2).alias("cancellation_rate"))
 
